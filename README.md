@@ -18,7 +18,7 @@ or add
 ```
 to the require section of your `composer.json` file.
 
-##Apply migrations to create required tables
+### Apply migrations to create required tables
 ``` bash
 yii migrate --migrationPath=@kerneldos/extmodule/migrations --interactive=0
 ```
@@ -28,6 +28,7 @@ Add the module to your main config file for manual config, ex:
 
 ``` php
 'modules' => [
+    //...
     'admin' => [
         'class' => 'kerneldos\extmodule\Module',
 
@@ -44,6 +45,7 @@ Add the module to your main config file for manual config, ex:
             ],
         ],
     ],
+    //...
 ],
 ```
 
