@@ -18,7 +18,7 @@ or add
 ```
 to the require section of your `composer.json` file.
 
-####Apply migrations to create required tables
+##Apply migrations to create required tables
 ``` bash
 yii migrate --migrationPath=@kerneldos/extmodule/migrations --interactive=0
 ```
