@@ -8,10 +8,7 @@ use yii\base\BootstrapInterface;
 
 class Module extends \yii\base\Module implements BootstrapInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public $id = 'admin';
+    public $moduleName = 'admin';
 
     /**
      * {@inheritdoc}
@@ -23,9 +20,6 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     public $controllerNamespace = 'kerneldos\extmodule\controllers';
 
-    /**
-     * {@inheritdoc}
-     */
     public function init()
     {
         parent::init();
@@ -51,17 +45,19 @@ class Module extends \yii\base\Module implements BootstrapInterface
 
         $hasInstance = false;
         foreach ($app->getModules() as $id => $module) {
-            $obj = \Yii::createObject($module);
+            if (is_array($module)) {
+                $obj = \Yii::createObject($module);
 
-            if ($obj instanceof $this) {
-                $hasInstance = true;
-                $this->id = $id;
-                break;
+                if ($obj instanceof self) {
+                    $hasInstance = true;
+                    $this->moduleName = $id;
+                    break;
+                }
             }
         }
 
         if (!$hasInstance) {
-            $app->setModule($this->id, ['class' => 'kerneldos\extmodule\Module']);
+            $app->setModule($this->moduleName, ['class' => 'kerneldos\extmodule\Module']);
         }
 
         $modules = \kerneldos\extmodule\models\Module::find()
@@ -80,7 +76,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
                 'controllerNamespace' => join('\\', [$baseNamespace, $name, $frontendNamespace]),
                 'viewPath' => "@app/modules/$name/views/frontend",
             ]);
-            $app->getModule($this->id)->setModule($name, [
+            $app->getModule($this->moduleName)->setModule($name, [
                 'class' => $module['class'],
                 'controllerNamespace' => join('\\', [$baseNamespace, $name, $backendNamespace]),
                 'viewPath' => "@app/modules/$name/views/backend",
@@ -91,12 +87,12 @@ class Module extends \yii\base\Module implements BootstrapInterface
             }
 
             if ($module['is_main']) {
-                $app->getUrlManager()->addRules(['' => $name], false);
+                $app->getUrlManager()->addRules(['/' => $name], false);
             }
 
             $app->view->params['menuItems'][] = [
                 'label' => ucwords($name),
-                'url' => "/$this->id/$name",
+                'url' => "/$this->moduleName/$name",
             ];
         }
 
@@ -111,7 +107,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
         $app->getUrlManager()->addRules([
             [
                 'class' => 'yii\web\GroupUrlRule',
-                'prefix' => $this->id,
+                'prefix' => $this->moduleName,
                 'rules' => [
                     '' => 'default/index',
 
